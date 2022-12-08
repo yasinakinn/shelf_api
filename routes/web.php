@@ -1,15 +1,21 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CustomAuthController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ShelfController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 */
-Route::get('dashboard', [CustomAuthController::class, 'dashboard']); 
-Route::get('login', [CustomAuthController::class, 'index'])->name('login');
-Route::post('custom-login', [CustomAuthController::class, 'customLogin'])->name('login.custom'); 
-Route::get('registration', [CustomAuthController::class, 'registration'])->name('register-user');
-Route::post('custom-registration', [CustomAuthController::class, 'customRegistration'])->name('register.custom'); 
-Route::get('signout', [CustomAuthController::class, 'signOut'])->name('signout');
+Route::post('user/login', [AuthController::class, 'login']); 
+Route::post('user/register', [AuthController::class, 'register']);
+Route::post('user/delete', [AuthController::class, 'delete']);
+Route::post('user/updatePassword', [AuthController::class, 'updatePassword']);
+Route::post('user/updateName', [AuthController::class, 'updateName']);
+Route::post('user/updateClearance', [AuthController::class, 'updateClearance']);
+
+// Path: shelf
+Route::post('shelves', [ShelfController::class, 'index']);
+Route::post('shelf/add', [ShelfController::class, 'store']);
+Route::post('shelf/update', [ShelfController::class, 'update']); 
