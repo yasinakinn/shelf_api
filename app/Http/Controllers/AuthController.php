@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ClearanceController;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -29,7 +30,13 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            return "You are now logged in";
+            $user = User::where('email', $request->email)->first();
+            $clearance = ClearanceController::getClearance($user->clearance);
+            $user->title = $clearance->title;
+            $user->permission = $clearance->permission;
+            $user->code = $clearance->code;
+            $user->clearance = $clearance->id;
+            return response()->json($user, 200);
         }else{
             return 'No users found';
         }
