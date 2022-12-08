@@ -29,5 +29,6 @@ class VerifyCsrfToken extends Middleware
     'shelf/add',
     'shelf/update',
     'shelf/delete',
+    'shelf/search'
 ];
 }

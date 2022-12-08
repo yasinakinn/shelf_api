@@ -29,3 +29,4 @@ Route::post('shelf', [ShelfController::class, 'get']);
 Route::post('shelf/add', [ShelfController::class, 'store']);
 Route::post('shelf/update', [ShelfController::class, 'update']);
 Route::post('shelf/delete', [ShelfController::class, 'delete']);
+Route::post('shelf/search', [ShelfController::class, 'search']);

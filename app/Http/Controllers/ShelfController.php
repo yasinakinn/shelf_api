@@ -119,4 +119,26 @@ class ShelfController extends Controller
         $shelf = Shelf::where('number', $request['number'])->first();
         return response()->json($shelf, 201);
     }
+
+    // Get a shelf by name like
+    public function search(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+            'name' => 'required',
+        ]);
+ 
+        if ($validator->fails()) {
+            return $validator->errors();
+        }
+        $credentials = $request->only('email', 'password');
+        $request = $request->except('email', 'password');
+        if (Auth::attempt($credentials)) {
+            $shelf = Shelf::where('name', 'like', '%'.$request['name'].'%')->get();
+            return response()->json($shelf, 201);
+        }else{
+            return 'No users found';
+        }
+    }
 }
