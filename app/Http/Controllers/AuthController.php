@@ -25,7 +25,10 @@ class AuthController extends Controller
         ]);
  
         if ($validator->fails()) {
-            return $validator->errors();
+            return array(
+                'status' => 'error',
+                'error' => $validator->errors()
+            );
         }
         $credentials = $request->only('email', 'password');
 
@@ -36,9 +39,15 @@ class AuthController extends Controller
             $user->permission = $clearance->permission;
             $user->code = $clearance->code;
             $user->clearance = $clearance->id;
-            return response()->json($user, 200);
+            return array(
+                'status' => 'success',
+                'user' => $user
+            );
         }else{
-            return 'No users found';
+            return array(
+                'status' => 'error',
+                'error' => 'Email or password is incorrect'
+            );
         }
     }
 
