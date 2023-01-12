@@ -184,4 +184,47 @@ class AuthController extends Controller
         }
         
     }
+
+    //Get users by clearance
+
+    public function getUsers(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+            'clearance_code' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors();
+        }
+
+        $data = $request->all();
+        $credentials = $request->only('email', 'password');
+        if (Auth::attempt($credentials)) {
+            if(str_contains($data['clearance_code'], 'A')){
+                //get users by clearance code with inner join
+                $users = User::select('*')
+                ->join('clearances', 'users.clearance', '=', 'clearances.id')
+                ->select('users.*', 'clearances.title', 'clearances.permission', 'clearances.code')
+                ->get();
+            }else{
+                //get users by clearance code with inner join
+                $users = User::select('*')
+                ->join('clearances', 'users.clearance', '=', 'clearances.id')
+                ->select('users.*', 'clearances.title', 'clearances.permission', 'clearances.code')
+                ->where('clearances.code', 'like', substr($data['clearance_code'], 0, 1).'%')
+                ->get();
+                
+            }
+            if($users){
+                return $users;
+            }else{
+                return 'No users found';
+            }
+        }else{
+            return 'Email or password is incorrect';
+        }
+        
+    }
 }

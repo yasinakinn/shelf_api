@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Controllers\Controller;
 
 use Validator;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
 use App\Models\Shelf;
+
 class ShelfController extends Controller
 {
     // Get all shelves
@@ -26,7 +28,7 @@ class ShelfController extends Controller
         if (Auth::attempt($credentials)) {
             $shelves = Shelf::all();
             return response()->json($shelves, 200);
-        }else{
+        } else {
             return 'No users found';
         }
     }
@@ -42,7 +44,7 @@ class ShelfController extends Controller
             'number' => 'required|unique:shelves',
             'qty' => 'required'
         ]);
- 
+
         if ($validator->fails()) {
             return $validator->errors();
         }
@@ -51,10 +53,9 @@ class ShelfController extends Controller
         if (Auth::attempt($credentials)) {
             $shelf = Shelf::create($request);
             return response()->json($shelf, 201);
-        }else{
+        } else {
             return 'No users found';
         }
-
     }
 
     // Update a shelf
@@ -65,7 +66,7 @@ class ShelfController extends Controller
             'password' => 'required',
             'number' => 'required',
         ]);
- 
+
         if ($validator->fails()) {
             return $validator->errors();
         }
@@ -78,7 +79,7 @@ class ShelfController extends Controller
             $shelf->qty = isset($request['qty']) ? $request['qty'] : $shelf->qty;
             $shelf->save();
             return response()->json($shelf, 201);
-        }else{
+        } else {
             return 'No users found';
         }
     }
@@ -91,7 +92,7 @@ class ShelfController extends Controller
             'password' => 'required',
             'number' => 'required',
         ]);
- 
+
         if ($validator->fails()) {
             return $validator->errors();
         }
@@ -101,7 +102,7 @@ class ShelfController extends Controller
             $shelf = Shelf::where('number', $request['number'])->first();
             $shelf->delete();
             return response()->json($shelf, 201);
-        }else{
+        } else {
             return 'No users found';
         }
     }
@@ -112,7 +113,7 @@ class ShelfController extends Controller
         $validator = Validator::make($request->all(), [
             'number' => 'required',
         ]);
- 
+
         if ($validator->fails()) {
             return $validator->errors();
         }
@@ -126,18 +127,35 @@ class ShelfController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
-            'name' => 'required',
+            'filter' => 'required',
+            'keyword' => 'required',
         ]);
- 
+
         if ($validator->fails()) {
             return $validator->errors();
         }
         $credentials = $request->only('email', 'password');
         $request = $request->except('email', 'password');
         if (Auth::attempt($credentials)) {
-            $shelf = Shelf::where('name', 'like', '%'.$request['name'].'%')->get();
+            switch ($request['filter']) {
+                case 'name':
+                    $shelf = Shelf::where('name', 'like', '%' . $request['keyword'] . '%')->get();
+                    break;
+                case 'type':
+                    $shelf = Shelf::where('type', 'like', '%' . $request['keyword'] . '%')->get();
+                    break;
+                case 'number':
+                    $shelf = Shelf::where('number', 'like', '%' . $request['keyword'] . '%')->get();
+                    break;
+                case 'all':
+                    $shelf = Shelf::where('name', 'like', '%' . $request['keyword'] . '%')
+                        ->orWhere('type', 'like', '%' . $request['keyword'] . '%')
+                        ->orWhere('number', 'like', '%' . $request['keyword'] . '%')
+                        ->get();
+                    break;
+            }
             return response()->json($shelf, 201);
-        }else{
+        } else {
             return 'No users found';
         }
     }

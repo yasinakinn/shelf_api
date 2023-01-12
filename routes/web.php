@@ -16,6 +16,7 @@ Route::post('user/delete', [AuthController::class, 'delete']);
 Route::post('user/updatePassword', [AuthController::class, 'updatePassword']);
 Route::post('user/updateName', [AuthController::class, 'updateName']);
 Route::post('user/updateClearance', [AuthController::class, 'updateClearance']);
+Route::post('users', [AuthController::class, 'getUsers']);
 
 // Path: clearance
 Route::post('clearances', [ClearanceController::class, 'index']);
